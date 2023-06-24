@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>Travis Maintenance</title>
+
+    <link rel="stylesheet" href="index.css">
+
+	<div id = "navholder"></div>
+  </head>
+  <body>
+	<div class = "header-div">
+    	<h1 class = "header-main block"> Travis Maintenance </h1>
+		<button class = "quote-btn block" id = "getquote-btn"> Get a quote! </button>
+	</div>
+	<div class = "loader"> </div>
+	<div class="content">
+	  <div class = "message-div">
+		<h1 class = "message-header"> Company Statement </h1>
+		<p class = "message-p">
+			I am Rusting Travis owner of Travis Maintenance. We are a Handyman
+			and 3D buisiness Disciplined, Dedicated, and Detailed. Our services
+			are as follows: House washing, Interior and Exterior painting, demo/junk
+			removal and haul, Handyman, and so much more! Above all, we make customer
+			satisfaction our top priority. If you would like a free estimate on any of
+			the services listed above, please click HERE or contact us at 615-917-8847
+			or rustintravis1995@gmail.com. I look forward to working with and for my
+			community and surrounding areas, our schedule is filling up quicky so do
+			not hesitate and get a quote today!
+		</p>
+	</div>
+	<hr>
+	<h1 class = "message-header"> Gallery </h1>	
+	<div id = "img-holder-div" class = "img-holder-div">
+	  	<div id = "left"> </div>
+	  	<div id = "right"> </div> 
+	</div>
+	<br> <hr>
+	<div id = "quote" class = "quote-div block">
+	</div>
+	<div>
+  </body>
+  <script src="jquery-3.7.0.min.js"></script>
+</html>
+<script>
+	$(document).ready(function(){
+		let IMAGES = [];
+        let IMG_NUM = 0; // atob(string)
+		let MAX_WIDTH = 500;
+		if ($(window).width() < 500){
+  			MAX_WIDTH = 300;
+		}
+        $.get("images.txt", function(data){
+            var lines = data.split('\n');
+            lines.pop();
+            $.each(lines, function(n, elem){
+                IMAGES.push(elem);
+                IMG_NUM ++;
+            });
+
+			for(var image = 0; image < IMG_NUM; image++){
+				var left = get_images_height("#left");
+				var right = get_images_height("#right");
+				console.log(left, right)
+				if (left <= right){
+					$("#left").append("<img class = 'image' id = 'image" + image.toString() + 
+						"' src = '/images/" + atob(IMAGES[image]) + "' alt = 'image' '>");
+				}
+				else{
+					$("#right").append("<img class = 'image' id = 'image" + image.toString() + 
+						"' src = '/images/" + atob(IMAGES[image]) + "' alt = 'image' '>");
+				}
+				var current_image = $("#image" + image.toString() );
+			
+				var width = current_image.width();
+				var height = current_image.height();
+				var scalar = width / MAX_WIDTH;
+				
+				height = height / scalar; 
+				width = width / scalar;
+
+				current_image.width(width);
+				current_image.height(height);
+			}
+        });
+
+		$(this).scrollTop(0);
+		$("#navholder").load("navbar.html");
+		$("#quote").load("quote.html");
+
+		// add navbar classes .. timeout waits untill their loaded
+        setTimeout(() => {
+            $("#about").addClass("active");
+        }, "1000");
+ 		
+		$("#getquote-btn").click(function(){
+			$([document.documentElement, document.body]).animate({
+				scrollTop: $("#quote").offset().top
+			}, 1500);
+		});
+
+		function get_images_height(element){
+			var height = 0;
+			$(element).children().each(function(){
+				height = height + $(this).height();
+			});
+			return height;
+		}
+
+	});
+</script>

@@ -1,0 +1,199 @@
+
+<h1 class = "quote-header" > Get a Quote </h1>
+<div class = "information-div block">
+	<img class = "location-img" src = "/images/location.png" alt = "Location ">
+	<p class = "location-p block"> 
+		<span class = "location"> Location </span>
+		<br/> 
+		<span> Charlotte, TN </span> 
+	</p>
+	<p class = "location-p"> 
+		<span class = "location"> Serving: </span>
+		<br/> 
+		<span> Bellevue </span> 
+		<br/> 
+		<span> Charlotte </span> 
+		<br/> 
+		<span> Dickson </span> 
+		<br/> 
+		<span> Nashville </span> 
+		<br/> 
+		<span> And more! </span> 
+	</p>
+	
+</div>
+<form id = "quote-form" class = "quote-form block">
+	<input type = "text" id = "name" placeholder = "Name">
+	<select id = "location">
+		<option value="null"> General Location </option>
+	</select> <br />
+	<select id = "method_of_contact">
+		<option value = "null"> Contact Method </option>
+		<option value = "phone"> Phone </option>
+		<option value = "email"> Email </option>
+	</select>
+	<input type = "text" id = "contact_method" placeholder = ""><br />
+	<textarea id = "description" name = "description" rows="20" cols = "50" 
+			placeholder ="Describe the job you'd like to get done here."></textarea><br />
+	<label for = "photos"> Photos: </label>
+	<input type = "file" id = "photos" name = "photos" accept="image/*" multiple><br /><br />
+	<button id = "quote-btn" class = "btn-primary"> Submit </button>
+</form>
+<script src="https://smtpjs.com/v3/smtp.js"></script>
+<script>
+	$(document).ready(function(){
+		$.get("counties.txt", function(data) {
+		var lines = data.split("\n");
+		lines.pop();
+		$.each(lines, function(n, elem) {
+			$("#location").append("<option value = " + elem + ">" + elem + "</option");
+		});
+	});
+
+	var photos         = [];
+	var num_photos     = 0;
+	var counter        = 0;
+	$("#quote-btn").click(function(e){
+		e.preventDefault();
+		var name           = $("#name").val();
+		var contact_method = $("#method_of_contact").val();
+		var contact        = $("#contact_method").val();
+		var loc            = $("#location").val();
+		var description    = $("#description").val();
+		if(name === "" || loc === "null" || contact_method === "null" || 
+			contact === "" || description === ""){
+			alert("Error: Please enter your name, location, a contact method, and a description.");
+			return;
+		}
+		else if (contact_method === "email"){
+			if(!verifyEmail(contact)){
+				alert("Error: The email you inserted is not a valid email.");
+				return;
+			}
+		}
+		else if (contact_method === "phone"){
+			var contact = verifyPhone(contact);
+			if(!contact){
+				alert("Error: The phone number you inserted is not a valid phone number.");
+				return;
+			}
+		}
+		
+		$(".content").hide();
+		$(".loader").show();
+
+		var files = $("#photos").prop('files');
+		num_photos = files.length;
+		if (num_photos == 0){
+			submit_email_request(); 
+		}
+		else{
+		  for (var i = 0; i < num_photos; i++){
+			  //var reader = new FileReader();
+			  //reader.readAsDataURL(files[i]);
+			  //var test = reader.result;
+			  toBase64(files[i], function( file, base64 ){
+				//var data_uri = "data:" + file.type + ";base64," + base64;
+				var photo = {"name": file.name, "data": base64};
+				send_email(photo);
+			  });
+		  }
+		}
+	});
+	var toBase64=function (file , callBack) {
+		var reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = function () {
+			callBack(file,reader.result);
+		};
+		reader.onerror = function (error) {
+			console.log('Error: ', error);
+			$(".loader").hide();
+			$(".content").show();
+		};
+	};
+	function send_email(photo){
+		photos.push(photo);
+		counter ++;
+		if (counter == num_photos){
+			submit_email_request();
+		}
+		else{
+			console.log(counter, num_photos);
+		}
+	}
+    function submit_email_request(){
+		var name           = $("#name").val();
+		var contact_method = $("#method_of_contact").val();
+		var contact        = $("#contact_method").val();
+		var loc            = $("#location").val();
+		var description    = $("#description").val();
+		
+		if (contact_method === "phone"){
+			var contact = verifyPhone(contact);
+		}
+
+		let header = "Quote request from " + name;
+		let desc = "Name: " + name + ", Location: " + loc;
+		if (contact_method === "phone")
+			desc = desc + ", Phone Number: " + contact;
+		else
+			desc = desc + ", Email: " + contact;
+
+		desc = desc + "<br> Description: " + description;
+	  Email.send({
+		  Host : "smtp.elasticemail.com",
+		  Username : "elijahatkins911@yahoo.com",
+		  Password : "36AFEACD01473DCF7F6836639FE04A7F9877",
+		  To : 'ieatcanadians@gmail.com',
+		  From : "ieatcanadians@gmail.com",
+		  Subject : header,
+		  Body : desc,
+		  Attachments: photos
+	  }).then(message => {
+		  if (message === "OK"){
+			  alert("Your request was proccessed! Be on the lookout for a response in the next couple of days.");
+		  }
+		  else{
+			  alert(message);
+			  //alert("Error: The email was not sent successfully, please try again or contact us via Phone: <number>");
+		  }
+		  $(".loader").hide();
+		  $(".content").show();
+		  photos = [];
+		  num_photos = 0;
+		  counter = 0;
+	  });
+	}
+	$("#name, #contact_method").focusin(function(){
+		$(this).attr("placeholder", "");
+	})
+	$("#name").focusout(function(){
+		$(this).attr("placeholder", "Name");
+	});
+	$("#contact_method").focusout(function(){
+		$("#method_of_contact").trigger("change");
+	});
+	
+	$("#method_of_contact").change(function(){
+		var contact = $("#contact_method");
+		if ($(this).val() === "null")
+			contact.attr("placeholder", "");
+		else if ($(this).val() === "phone")
+			contact.attr("placeholder", "Enter Phone Number");
+		else
+			contact.attr("placeholder", "Enter an Email");
+	});
+
+	function verifyEmail(email){
+		var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		return regex.test(email);
+	}
+	function verifyPhone(phone){
+		phone_val = phone.replace(/\D[^\.]/g, "");
+		if (phone_val.match(/\d/g).length === 10)
+			return phone_val.slice(0,3)+"-"+phone_val.slice(3,6)+"-"+phone_val.slice(6);
+		return false;
+	}
+  });
+</script>
