@@ -49,9 +49,11 @@
 			$("#location").append("<option value = " + elem + ">" + elem + "</option");
 		});
 	});
-
+    var CREDS = ["ZWxpamFoYXRraW5zOTExQHlhaG9vLmNvbQ==", "MzZBRkVBQ0QwMTQ3M0RDRjdGNjgzNjYzOUZFMDRBN0Y5ODc3"];
+    var MAX_SIZE       = 7.2 * 1024 * 1024; 
 	var photos         = [];
 	var num_photos     = 0;
+    var photos_size    = 0;
 	var counter        = 0;
 	$("#quote-btn").click(function(e){
 		e.preventDefault();
@@ -84,21 +86,21 @@
 
 		var files = $("#photos").prop('files');
 		num_photos = files.length;
+
 		if (num_photos == 0){
 			submit_email_request(); 
 		}
 		else{
 		  for (var i = 0; i < num_photos; i++){
-			  //var reader = new FileReader();
-			  //reader.readAsDataURL(files[i]);
-			  //var test = reader.result;
 			  toBase64(files[i], function( file, base64 ){
-				//var data_uri = "data:" + file.type + ";base64," + base64;
 				var photo = {"name": file.name, "data": base64};
+                photos_size += file.size;
 				send_email(photo);
 			  });
 		  }
 		}
+        counter = 0;
+        photos_size = 0;
 	});
 	var toBase64=function (file , callBack) {
 		var reader = new FileReader();
@@ -107,7 +109,7 @@
 			callBack(file,reader.result);
 		};
 		reader.onerror = function (error) {
-			console.log('Error: ', error);
+            alert("Error: there has been an issue with one of the photos. Please review them and try again.");
 			$(".loader").hide();
 			$(".content").show();
 		};
@@ -118,9 +120,6 @@
 		if (counter == num_photos){
 			submit_email_request();
 		}
-		else{
-			console.log(counter, num_photos);
-		}
 	}
     function submit_email_request(){
 		var name           = $("#name").val();
@@ -129,10 +128,17 @@
 		var loc            = $("#location").val();
 		var description    = $("#description").val();
 		
+        if (photos_size >= MAX_SIZE){
+            alert("Error: Combined photo size must be less than 7MB, please " + 
+                  "change your photo selection and try again");
+			$(".loader").hide();
+			$(".content").show();
+            return;
+        }
+        // adds dashes to the phone number. 
 		if (contact_method === "phone"){
-			var contact = verifyPhone(contact);
-		}
-
+	        contact = verifyPhone(contact);
+        }
 		let header = "Quote request from " + name;
 		let desc = "Name: " + name + ", Location: " + loc;
 		if (contact_method === "phone")
@@ -143,9 +149,9 @@
 		desc = desc + "<br> Description: " + description;
 	  Email.send({
 		  Host : "smtp.elasticemail.com",
-		  Username : "elijahatkins911@yahoo.com",
-		  Password : "36AFEACD01473DCF7F6836639FE04A7F9877",
-		  To : 'ieatcanadians@gmail.com',
+		  Username : atob(CREDS[0]),
+		  Password : atob(CREDS[1]),
+		  To : "ieatcanadians@gmail.com",
 		  From : "ieatcanadians@gmail.com",
 		  Subject : header,
 		  Body : desc,
@@ -155,8 +161,7 @@
 			  alert("Your request was proccessed! Be on the lookout for a response in the next couple of days.");
 		  }
 		  else{
-			  alert(message);
-			  //alert("Error: The email was not sent successfully, please try again or contact us via Phone: <number>");
+			  alert("Error: Quote failed to send, please try again or contact us via Phone: 615-917-8847 ... " + message);
 		  }
 		  $(".loader").hide();
 		  $(".content").show();

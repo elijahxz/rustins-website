@@ -21,13 +21,16 @@
 	  <div class = "message-div">
 		<h1 class = "message-header"> Company Statement </h1>
 		<p class = "message-p">
-			I am Rusting Travis owner of Travis Maintenance. We are a Handyman
-			and 3D buisiness Disciplined, Dedicated, and Detailed. Our services
-			are as follows: House washing, Interior and Exterior painting, demo/junk
-			removal and haul, Handyman, and so much more! Above all, we make customer
+			I am Rustin Travis owner of Travis Maintenance. We are a Handyman service
+			and 3-D buisiness: Disciplined, Dedicated, and Detailed. Our services
+			are as follows: House Washing, Interior and Exterior Painting, Demo/Junk
+			Removal and Haul, Handyman, and so much more! Above all, we make customer
 			satisfaction our top priority. If you would like a free estimate on any of
-			the services listed above, please click HERE or contact us at 615-917-8847
-			or rustintravis1995@gmail.com. I look forward to working with and for my
+            the services listed above, please click <a class = "message-a" id = "getquote">HERE</a> or contact us at 
+            <a class = "message-a" href="tel:6159178847">615-917-8847</a>
+            or 
+            <a class = "message-a" target = "_blank" href="mailto:rustintravis1995@gmail.com">rustintravis1995@gmail.com</a>.
+            I look forward to working with and for my
 			community and surrounding areas, our schedule is filling up quicky so do
 			not hesitate and get a quote today!
 		</p>
@@ -47,6 +50,7 @@
 </html>
 <script>
 	$(document).ready(function(){
+        var loading_image_error = false;
 		let IMAGES = [];
         let IMG_NUM = 0; // atob(string)
 		let MAX_WIDTH = 500;
@@ -64,19 +68,25 @@
 			for(var image = 0; image < IMG_NUM; image++){
 				var left = get_images_height("#left");
 				var right = get_images_height("#right");
-				console.log(left, right)
 				if (left <= right){
 					$("#left").append("<img class = 'image' id = 'image" + image.toString() + 
-						"' src = '/images/" + atob(IMAGES[image]) + "' alt = 'image' '>");
+						"' src = '/images/" + atob(IMAGES[image]) + "' alt = 'image' >");
 				}
 				else{
 					$("#right").append("<img class = 'image' id = 'image" + image.toString() + 
 						"' src = '/images/" + atob(IMAGES[image]) + "' alt = 'image' '>");
 				}
 				var current_image = $("#image" + image.toString() );
-			
 				var width = current_image.width();
 				var height = current_image.height();
+                if (width == 0){
+                    width = 500;
+                    loading_image_error = true;
+                }
+                if (height == 0){
+                    height = 500;
+                    loading_image_error = true;
+                }
 				var scalar = width / MAX_WIDTH;
 				
 				height = height / scalar; 
@@ -94,13 +104,53 @@
 		// add navbar classes .. timeout waits untill their loaded
         setTimeout(() => {
             $("#about").addClass("active");
+            if (loading_image_error == true){
+                for(var image = 0; image < IMG_NUM; image++){
+				    var current_image = $("#image" + image.toString() );
+                    var nat_w = document.getElementById("image" + image.toString() ).naturalWidth;
+                    var nat_h = document.getElementById("image" + image.toString() ).naturalHeight;
+                    if (nat_w != 0 && nat_h != 0){
+                        var scalar = nat_w / MAX_WIDTH;
+				
+                        var height = nat_h / scalar; 
+                        var width = nat_w / scalar;
+                        current_image.width(width);
+                        current_image.height(height);
+                    }
+                    
+                }
+            }
         }, "1000");
  		
-		$("#getquote-btn").click(function(){
+		$("#getquote-btn, #getquote").click(function(){
 			$([document.documentElement, document.body]).animate({
 				scrollTop: $("#quote").offset().top
 			}, 1500);
 		});
+
+        $(window).resize(function(){
+            if ($(window).width() < 575){
+                resize_photos($(window).width());
+            }
+        });
+        function resize_photos(window_width){
+            var img_width = window_width - 60;
+            if (img_width > MAX_WIDTH){
+                img_width = MAX_WIDTH;
+            }
+			for(var image = 0; image < IMG_NUM; image++){
+				var current_image = $("#image" + image.toString() );
+                var width = current_image.width();
+				var height = current_image.height();
+				var scalar = width / img_width;
+				
+				height = height / scalar; 
+				width = width / scalar;
+
+				current_image.width(width);
+				current_image.height(height);
+            }
+        }
 
 		function get_images_height(element){
 			var height = 0;

@@ -123,7 +123,6 @@ $(document).ready(function(){
 	  	
 	  	$("#slideshow").height(MAX_WIDTH);
 	  	$("#slideshow").width(MAX_WIDTH);
-	  	console.log(width, height, MAX_WIDTH);
 
 
 	}

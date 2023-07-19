@@ -63,6 +63,7 @@ body{
 	text-align: center;
 }
 .header-main{
+    padding-top: 10px;
   	margin: auto;
 	font-size: 80px;
 	font-family: Open Sans, Arial, sans-serif;
@@ -254,6 +255,16 @@ body{
 	color: #EBEBEB;
 	font-size: 22px;
 	font-family: Open Sans, Arial, sans-serif;
+    cursor: pointer;
+}
+
+.message-a{
+    cursor: pointer;
+    text-decoration: none;
+    color: #FF9E4D;
+}
+.message-a:hover{
+    color: #FF7000;
 }
 
 .slideshow{
@@ -263,11 +274,14 @@ body{
 
 .img-holder-div{
 	display: flex;
+    flex-wrap: wrap;
 	justify-content: center;
 }
 #left, #right{
+    max-width: 500px;
 	display: flex;
 	flex-direction: column;
+    padding: 2px;
 }
 .image{
   	margin: 5px;
@@ -278,23 +292,27 @@ body{
 }
 /* Next & previous buttons */
 .prev, .next {
-  vertical-align: bottom !important;
+  text-align: center;
+  vertical-align: center;
+  line-height: 80px;
   width: 20px;
+  height: 80px;
   cursor: pointer;
   color: white;
   font-weight: bold;
   font-size: 30px;
   transition: 0.6s ease;
-  border-radius: 0 3px 3px 0;
   padding: 2px;
   user-select: none;
   background-color: rgba(0, 0, 0, .7);
 }
 .prev{
-	float: left;
+    border-radius: 3px 0 0 3px;
+    float: left;
 }
 .next{
-	float:right; 
+    border-radius: 0 3px 3px 0;
+    float:right; 
 }
 
 /* On hover, add a black background color with a little bit see-through */
@@ -305,17 +323,20 @@ body{
 .active, .dot:hover {
   background-color: #717171;
 }
-@media (max-width:387px)  { 
-	.contact-info{
-	 	font-size: 12px !important;
-		margin: 0px !important;
-		padding: 2px !important;
+@media (max-width:361px)  { 
+    #contact-email, #contact-number{
+        padding-left: 10px !important;
+    }
+}
+@media (max-width:400px)  { 
+	.quote-form{
+		max-width: 270px !important;
 	}
-	#contact-number{
-	  margin-top: 20px !important;
+	#name, #location, #method_of_contact, #contact_method, #description{
+		width: 250px !important;
 	}
 }
-@media (max-width:430px)  { 
+@media (max-width:510px)  { 
 	.header-main{
 		font-size: 40px;
 	}
@@ -341,20 +362,10 @@ body{
 	.link, .contact, .or{
 		font-size: 15px;
 	}
-	#contact-number{
-		font-size: 15px;
-		margin-right: 15px;
-		float: right;
-		vertical-align: top;
-		padding-bottom: 0px;
-	}
-	#contact-email{
-	  	float: right;
-		margin-right: 2px;
-	  	margin-top: -10px;	
-		font-size: 13px;
-		padding: 0px;
-	}
+    #contact-email, #contact-number{
+        padding-left: 2px;
+        padding-right: 2px;
+    }
 	.or{
 		display: none;
 	}
@@ -366,14 +377,7 @@ body{
  		text-shadow: 1px 1px gray;
 	}
 	.message-p{
-		font-size: 11px;
-	}
-	.img-holder-div{
-		display: inline;
-	}
-	#left, #right{
-		justify-content: center;
-		align-items: center;
+		font-size: 16px;
 	}
 /* smartphones, portrait iPhone, portrait 480x320 phones (Android) */ 
 }
