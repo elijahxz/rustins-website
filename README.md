@@ -16,6 +16,5 @@ There are two things that I would like to improve on this project in the future
 
 Note: The photo limit is ~7.5 mb per SMPT's protocals. 
 
-If you would like to visit this site, go to http://travismaintenance.com
+If you would like to visit this site, go to http://travismaintenance.infinityfreeapp.com/
 
-  - Note: you will be redirected to a different site link (http://travismaintenance.infinityfreeapp.com/)
