@@ -1,4 +1,4 @@
-# rustins-website
+# rustins-website 🔨🖌️🔧
 This was a personal project I developed for a family member, Rustin, for his handyman business. 
 
 I developed this application in Summer 2023. The front end was developed then linked to an JavaScript Email API (SMPT JS: https://smtpjs.com/)
@@ -18,3 +18,8 @@ Note: The photo limit is ~7.5 mb per SMPT's protocals.
 
 If you would like to visit this site, go to http://travismaintenance.infinityfreeapp.com/
 
+## Photos!
+Homepage:
+![Homepage](https://github.com/user-attachments/assets/efa15075-4ea9-48ab-88e8-3c708a4ef8f2)
+About:
+![About](https://github.com/user-attachments/assets/5f38cf0a-40b0-4554-aad0-4493aa2f1ed7)
